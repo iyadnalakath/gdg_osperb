@@ -25,7 +25,7 @@ class LedgerHead(models.Model):
     
 
 class Ledger(models.Model):
-    ledger_head = models.ForeignKey(LedgerHead, on_delete=models.CASCADE)
+    ledger_head = models.ForeignKey(LedgerHead, on_delete=models.CASCADE,related_name='ledger_head')
     title = models.CharField(max_length=125, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     total_credit_amount_AED = models.DecimalField(max_digits=15, decimal_places=3, default=0)
@@ -55,7 +55,7 @@ class LedgerEntry(models.Model):
     conversion_rate = models.DecimalField(max_digits=10, decimal_places=2)
     remarks = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=now, editable=True)
-7
+
     def __str__(self):
         return self.particulars
     
