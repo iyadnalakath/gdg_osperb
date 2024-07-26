@@ -19,7 +19,8 @@ class ClientAdmin(admin.ModelAdmin):
         "ledger_balance",
         "total_transfer_amount",
         "total_client_recieved_aed_amount",
-        "total_client_recieved_usd_amount"
+        "total_client_recieved_usd_amount",
+        "ledger"
         
         ]
 admin.site.register(Client, ClientAdmin)

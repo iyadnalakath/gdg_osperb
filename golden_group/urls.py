@@ -23,5 +23,6 @@ urlpatterns = [
     path("gdg/user/", include("user.urls")),
     path("gdg/companies/", include("companies.urls")),
     path("gdg/accounts/", include("accounts.urls")),
+    path("gdg/operations/", include("operations.urls")),
 ]
 

@@ -44,6 +44,7 @@ class CompanyBankAccountAdmin(admin.ModelAdmin):
             "international_receipt_charge",
             "domestic_intra_transfer_charge",
             "bank_cash_withdrawal_fee_percentage",
+            "ledger"
         
     ]
 

@@ -19,7 +19,7 @@ class CompanyBankAccount(models.Model):
     international_receipt_charge = models.DecimalField(max_digits=10, decimal_places=3)
     domestic_intra_transfer_charge = models.DecimalField(max_digits=10, decimal_places=3)
     bank_cash_withdrawal_fee_percentage = models.DecimalField(max_digits=10, decimal_places=3)
-    # ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE, null=True, blank=True)
     # ledger_balance = models.DecimalField(max_digits=10, decimal_places=3)
     
     def __str__(self):

@@ -1,4 +1,6 @@
 from django.db.models import Sum
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from rest_framework import serializers
 from .models import LedgerHead,Ledger,LedgerEntry
 from .choice import EntryTypeChoice,AccountTypeChoice
@@ -72,6 +74,8 @@ class LedgerHeadSerializer(serializers.ModelSerializer):
     
 class LedgerEntrySerializer(serializers.ModelSerializer):
     ledger_name = serializers.CharField(source="ledger.title", read_only=True)
+    content_type = serializers.PrimaryKeyRelatedField(queryset=ContentType.objects.all(), required=False)
+    object_id = serializers.IntegerField(required=False)
     
     class Meta:
         model = LedgerEntry
@@ -87,6 +91,9 @@ class LedgerEntrySerializer(serializers.ModelSerializer):
             "conversion_rate",
             "remarks",
             "created_at",
+            "content_type",
+            "object_id",
+
         ]
         read_only_fields = [
             'created_at',

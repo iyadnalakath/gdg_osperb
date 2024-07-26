@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from .choice import AccountTypeChoice,EntryTypeChoice
 
 
@@ -55,10 +57,14 @@ class LedgerEntry(models.Model):
     conversion_rate = models.DecimalField(max_digits=10, decimal_places=2)
     remarks = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=now, editable=True)
-
+    
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_object = GenericForeignKey('content_type', 'object_id') 
+    
     def __str__(self):
         return self.particulars
-    
+
 
 
 class Contra(models.Model):

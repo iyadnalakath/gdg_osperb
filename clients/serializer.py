@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import BankDepositCard,ClientBankAccount,Client
+from accounts.models import Ledger,LedgerHead
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,10 +21,22 @@ class ClientSerializer(serializers.ModelSerializer):
             "ledger_balance",
             "total_transfer_amount",
             "total_client_recieved_aed_amount",
-            "total_client_recieved_usd_amount"
+            "total_client_recieved_usd_amount",
+            "ledger"
 
             ]
-
+        
+    def create(self, validated_data):
+        if 'ledger' not in validated_data or validated_data['ledger'] is None:
+            ledger_head = LedgerHead.objects.get(pk=2)
+            ledger = Ledger.objects.create(
+                ledger_head=ledger_head,
+                title=validated_data['name'],
+                is_default=True
+            )
+            validated_data['ledger'] = ledger
+        return super(ClientSerializer, self).create(validated_data)
+    
 class ClientListSerializer(serializers.Serializer):
     clients_count = serializers.IntegerField()
     clients = ClientSerializer(many=True)

@@ -1,6 +1,6 @@
 from django.db import models
 from companies.models import CompanyBankAccount,Country
-from accounts.models import Ledger
+from accounts.models import Ledger,LedgerHead
 
 # Create your models here.
 
@@ -18,7 +18,7 @@ class Client(models.Model):
     amount_transfer_rate_usd = models.DecimalField(max_digits=10, decimal_places=3)
     is_service_charge_accountable = models.BooleanField(default=False)
     ledger_balance = models.DecimalField(max_digits=25, decimal_places=3)
-    # ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE, null=True, blank=True)
     total_transfer_amount = models.DecimalField(max_digits=10, decimal_places=3, default=0.00)
     total_client_recieved_aed_amount = models.DecimalField(max_digits=10, decimal_places=3, default=0.00)
     total_client_recieved_usd_amount = models.DecimalField(max_digits=10, decimal_places=3, default=0.00)
@@ -26,6 +26,7 @@ class Client(models.Model):
     def __str__(self):
         return self.name
     
+
 
 class ClientBankAccount(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)

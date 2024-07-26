@@ -1,5 +1,10 @@
+from django.contrib.contenttypes.models import ContentType
+from django.utils.timezone import now
 from rest_framework import serializers
-from .models import Transfer
+from .models import Transfer,Deposit
+from accounts.models import LedgerEntry
+from accounts.choice import EntryTypeChoice
+from accounts.serializer import LedgerEntrySerializer
 
 
 class TransferSerializer(serializers.ModelSerializer):
@@ -44,3 +49,52 @@ class TransferSerializer(serializers.ModelSerializer):
             "net_profit"
 
             ]
+        
+        
+class DepositSerializer(serializers.ModelSerializer):
+    ledger_entries = LedgerEntrySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Deposit
+        fields = [
+
+            "id",
+            "bank_deposit_card",
+            "company_bank_account",
+            "client",
+            "amount",
+            "ledger_entries",
+            "note"
+
+            ]
+        
+    def create(self, validated_data):
+        deposit = super().create(validated_data)
+        LedgerEntry.objects.create(
+            date=now(),
+            particulars=f"Deposit for {deposit.client.name}",
+            ledger=deposit.client.ledger,
+            entry_type=EntryTypeChoice.CREDIT,
+            amount_AED=0,
+            amount_SAR=deposit.amount,
+            conversion_rate=1,
+            remarks=deposit.note,
+            created_at=now(),
+            content_type=ContentType.objects.get_for_model(deposit),
+            object_id=deposit.id
+        )
+
+        LedgerEntry.objects.create(
+            date=now(),
+            particulars=f"Deposit from {deposit.client.name} to Company Bank Account",
+            ledger=deposit.company_bank_account.ledger,
+            entry_type=EntryTypeChoice.CREDIT,
+            amount_AED=0,
+            amount_SAR=deposit.amount,
+            conversion_rate=1,
+            remarks=deposit.note,
+            created_at=now(),
+            content_type=ContentType.objects.get_for_model(deposit),
+            object_id=deposit.id
+        )
+        return deposit

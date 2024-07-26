@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.timezone import now
+from django.contrib.contenttypes.fields import GenericRelation
 from clients.models import Client,ClientBankAccount,BankDepositCard
 from companies.models import CompanyBankAccount
+from accounts.models import LedgerEntry
 from .choice import WithdrawalTypeChoice,TransferCurrencyChoice,ClientTransferRateTypeChoice,StatusChoices
 
 
@@ -49,4 +51,6 @@ class Deposit(models.Model):
     company_bank_account = models.ForeignKey(CompanyBankAccount, on_delete=models.CASCADE)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=3)
-    Note = models.TextField(null=True, blank=True)
+    note = models.TextField(null=True, blank=True)
+    ledger_entries = GenericRelation(LedgerEntry)
+
