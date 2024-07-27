@@ -60,3 +60,19 @@ class LedgerEntryAdmin(admin.ModelAdmin):
             
         ]
 admin.site.register(LedgerEntry, LedgerEntryAdmin)
+
+class ContraAdmin(admin.ModelAdmin):
+    list_display = [
+        
+            "id",
+            "date",
+            "particulars",
+            "from_ledger",
+            "to_ledger",
+            "amount_AED",
+            "amount_SAR",
+            "conversion_rate",
+            "remarks",
+            
+        ]
+admin.site.register(Contra, ContraAdmin)

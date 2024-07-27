@@ -68,14 +68,14 @@ class LedgerEntry(models.Model):
 
 
 class Contra(models.Model):
-    date = models.DateField(auto_now=True)
+    date = models.DateField(auto_now_add=True)
     particulars = models.CharField(max_length=125, null=False, blank=False)
     from_ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE,related_name='from_ledger_contra')
     to_ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE,related_name='to_ledger_contra')
     amount_AED = models.DecimalField(max_digits=25, decimal_places=3)
     amount_SAR = models.DecimalField(max_digits=25, decimal_places=3)
     conversion_rate = models.DecimalField(max_digits=10, decimal_places=2)
-    remarks = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    remarks = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.particulars

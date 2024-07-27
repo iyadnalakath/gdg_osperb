@@ -1,10 +1,12 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Sum
-from .models import LedgerEntry,Ledger
+from django.contrib.contenttypes.models import ContentType
+from .models import LedgerEntry,Ledger,Contra
 from .choice import EntryTypeChoice
 
-# signals for calculating ledger data
+#<<<<<<< signals for calculating ledger data >>>>>>>>>
+
 @receiver(post_save, sender=LedgerEntry)
 def update_ledger_totals(sender, instance, **kwargs):
     ledger = instance.ledger
@@ -54,3 +56,39 @@ def update_ledger_head_totals(ledger_head):
 @receiver(post_save, sender=Ledger)
 def ledger_post_save(sender, instance, **kwargs):
     update_ledger_head_totals(instance.ledger_head)
+
+# <<<<<<< SIGNALS FOR CONTRA >>>>>>>>>
+
+@receiver(post_save, sender=Contra)
+def create_or_update_ledger_entries(sender, instance, created, **kwargs):
+    content_type = ContentType.objects.get_for_model(instance)
+
+    # Create or update LedgerEntry for from_ledger
+    LedgerEntry.objects.update_or_create(
+        content_type=content_type,
+        object_id=instance.id,
+        ledger=instance.from_ledger,
+        defaults={
+            'particulars': f"Transfer to {instance.to_ledger.title}",
+            'entry_type': EntryTypeChoice.DEBIT,
+            'amount_AED': instance.amount_AED,
+            'amount_SAR': instance.amount_SAR,
+            'conversion_rate': instance.conversion_rate,
+            'remarks': instance.remarks,
+        }
+    )
+
+    # Create or update LedgerEntry for to_ledger
+    LedgerEntry.objects.update_or_create(
+        content_type=content_type,
+        object_id=instance.id,
+        ledger=instance.to_ledger,
+        defaults={
+            'particulars': f"Transfer from {instance.from_ledger.title}",
+            'entry_type': EntryTypeChoice.CREDIT,
+            'amount_AED': instance.amount_AED,
+            'amount_SAR': instance.amount_SAR,
+            'conversion_rate': instance.conversion_rate,
+            'remarks': instance.remarks,
+        }
+    )
