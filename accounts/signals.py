@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.db.models import Sum
 from django.contrib.contenttypes.models import ContentType
@@ -58,7 +58,7 @@ def ledger_post_save(sender, instance, **kwargs):
     update_ledger_head_totals(instance.ledger_head)
 
 # <<<<<<< SIGNALS FOR CONTRA >>>>>>>>>
-
+# <<<<<<< create and update signals for contra >>>>>>>
 @receiver(post_save, sender=Contra)
 def create_or_update_ledger_entries(sender, instance, created, **kwargs):
     content_type = ContentType.objects.get_for_model(instance)
@@ -92,3 +92,22 @@ def create_or_update_ledger_entries(sender, instance, created, **kwargs):
             'remarks': instance.remarks,
         }
     )
+
+# <<<<<<< delete signal for contra >>>>>
+@receiver(pre_delete, sender=Contra)
+def delete_ledger_entries(sender, instance, **kwargs):
+    content_type = ContentType.objects.get_for_model(instance)
+
+    # Delete LedgerEntry for from_ledger
+    LedgerEntry.objects.filter(
+        content_type=content_type,
+        object_id=instance.id,
+        ledger=instance.from_ledger,
+    ).delete()
+
+    # Delete LedgerEntry for to_ledger
+    LedgerEntry.objects.filter(
+        content_type=content_type,
+        object_id=instance.id,
+        ledger=instance.to_ledger,
+    ).delete()
