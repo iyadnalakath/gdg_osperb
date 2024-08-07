@@ -57,6 +57,8 @@ class LedgerEntry(models.Model):
     conversion_rate = models.DecimalField(max_digits=10, decimal_places=2)
     remarks = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=now, editable=True)
+
+    # deposit = models.ForeignKey('operations.Deposit', on_delete=models.CASCADE, null=True, blank=True, related_name='ledger_entries')
     
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)

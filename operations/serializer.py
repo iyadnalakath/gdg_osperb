@@ -67,34 +67,39 @@ class DepositSerializer(serializers.ModelSerializer):
             "note"
 
             ]
-        
-    def create(self, validated_data):
-        deposit = super().create(validated_data)
-        LedgerEntry.objects.create(
-            date=now(),
-            particulars=f"Deposit for {deposit.client.name}",
-            ledger=deposit.client.ledger,
-            entry_type=EntryTypeChoice.CREDIT,
-            amount_AED=0,
-            amount_SAR=deposit.amount,
-            conversion_rate=1,
-            remarks=deposit.note,
-            created_at=now(),
-            content_type=ContentType.objects.get_for_model(deposit),
-            object_id=deposit.id
-        )
 
-        LedgerEntry.objects.create(
-            date=now(),
-            particulars=f"Deposit from {deposit.client.name} to Company Bank Account",
-            ledger=deposit.company_bank_account.ledger,
-            entry_type=EntryTypeChoice.CREDIT,
-            amount_AED=0,
-            amount_SAR=deposit.amount,
-            conversion_rate=1,
-            remarks=deposit.note,
-            created_at=now(),
-            content_type=ContentType.objects.get_for_model(deposit),
-            object_id=deposit.id
-        )
-        return deposit
+
+
+
+   
+        
+    # def create(self, validated_data):
+    #     deposit = super().create(validated_data)
+    #     LedgerEntry.objects.create(
+    #         date=now(),
+    #         particulars=f"Deposit for {deposit.client.name}",
+    #         ledger=deposit.client.ledger,
+    #         entry_type=EntryTypeChoice.CREDIT,
+    #         amount_AED=0,
+    #         amount_SAR=deposit.amount,
+    #         conversion_rate=1,
+    #         remarks=deposit.note,
+    #         created_at=now(),
+    #         content_type=ContentType.objects.get_for_model(deposit),
+    #         object_id=deposit.id
+    #     )
+
+    #     LedgerEntry.objects.create(
+    #         date=now(),
+    #         particulars=f"Deposit from {deposit.client.name} to Company Bank Account",
+    #         ledger=deposit.company_bank_account.ledger,
+    #         entry_type=EntryTypeChoice.CREDIT,
+    #         amount_AED=0,
+    #         amount_SAR=deposit.amount,
+    #         conversion_rate=1,
+    #         remarks=deposit.note,
+    #         created_at=now(),
+    #         content_type=ContentType.objects.get_for_model(deposit),
+    #         object_id=deposit.id
+    #     )
+    #     return deposit
